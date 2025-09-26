@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</head>
+
+<body class="bg-light">
+    <h2 class="mt-4 text-center">Orders</h2>
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-primary m-4">BACK</a>
+    <div class="container-fluid">
+
+        <table class="table table-bordered me-2 w-100">
+            <thead class="table-dark">
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.order_id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>₹{{ order.total_amount }}</td>
+                    <td>
+                        {% if order.status == 'requested' %}
+                        <span class="text-warning">Requested</span>
+                        {% elif order.status == 'accepted' %}
+                        <span class="text-primary">Accepted</span>
+                        {% elif order.status == 'rejected' %}
+                        <span class="text-danger">Rejected</span>
+                        {% elif order.status == 'paid' %}
+                        <span class="text-success">Paid</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.status == "requested" %}
+                        <a href="{% url 'update_order_status' order.id 'accept' %}"
+                            class="btn btn-sm btn-primary">Accept</a>
+                        <a href="{% url 'update_order_status' order.id 'reject' %}" class="btn btn-sm btn-danger">Reject</a>
+                        {% elif order.status == "accepted" %}
+                        <span class="text-warning">Waiting for payment</span>
+                        {% elif order.status == "paid" %}
+                            <span class="text-success">Paid</span>
+                        {% else %}
+                        <span class="text-muted">NA</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No orders yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>
