@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    container_name: purchase_django
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code            # Mount project code
+      - ./db.sqlite3:/code/db.sqlite3  # Persist SQLite database
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"

@@ -85,6 +85,7 @@ def add_to_cart(request,id):
         
         total = 0
         for item in cart.items.all():
+
             total += item.price * item.quantity
         cart.total = total
         cart.save()
