@@ -16,17 +16,17 @@ ALLOWED_HOSTS = ["purchasemanagement.onrender.com", ".onrender.com", "localhost"
 CSRF_TRUSTED_ORIGINS = ["https://purchasemanagement.onrender.com"]
 # Application definition
 INSTALLED_APPS = [
+    'cloudinary_storage',  # This MUST be above staticfiles
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage', 
     'django.contrib.staticfiles',
     'purchase',
     "crispy_forms",
     "crispy_bootstrap5",
-    'cloudinary',
+    'cloudinary',          # This can be at the bottom
 ]
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -82,11 +82,13 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # Media files (uploads) handled by Cloudinary
 MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    'SECURE': True,
 }
 # Login
 LOGIN_URL = '/'
