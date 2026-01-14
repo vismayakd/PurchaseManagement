@@ -52,7 +52,13 @@
         <div class="col-md-2 d-flex">   
             <div class="card shadow-sm w-100 h-100">
 
-                <img src="{{ product.image.url }}" class="card-img-top fixed-img">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top fixed-img">
+                {% else %}
+                    <div class="card-img-top fixed-img d-flex align-items-center justify-content-center bg-light">
+                        No Image
+                    </div>
+                {% endif %}
 
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">{{ product.name }}</h5>

@@ -15,8 +15,14 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Copy project files
 COPY . .
 
+# Run collectstatic during build
+RUN python manage.py collectstatic --noinput
+
+# Give execution permissions to start.sh
+RUN chmod +x start.sh
+
 # Expose port
 EXPOSE 8000
 
-# Start Gunicorn
-CMD ["gunicorn", "Purchaseproject.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Start the application using start.sh
+CMD ["./start.sh"]

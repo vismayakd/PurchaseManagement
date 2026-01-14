@@ -2,21 +2,18 @@
 Django settings for Purchaseproject project (Render-ready)
 """
 import os
+import dj_database_url
 from pathlib import Path
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 # SECURITY
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     "django-insecure-500gb^yja+0xq_)vp!fci9g@_af&s0&4%%c2adqq_2irz^*77-"
 )
-
-DEBUG = False  # Set True temporarily to see errors, set False after testing
-
-# Replace "*" with your actual domain when DEBUG=False
-ALLOWED_HOSTS = ["purchasemanagement.onrender.com"]
-
+DEBUG = False  
+# Core Render Configuration
+ALLOWED_HOSTS = ["purchasemanagement.onrender.com", ".onrender.com", "localhost", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["https://purchasemanagement.onrender.com"]
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -24,17 +21,18 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage', 
     'django.contrib.staticfiles',
     'purchase',
     "crispy_forms",
     "crispy_bootstrap5",
+    'cloudinary',
 ]
-
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -42,9 +40,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 ROOT_URLCONF = 'Purchaseproject.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -59,17 +55,14 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'Purchaseproject.wsgi.application'
-
-# Database
+# Database - Automatically uses PostgreSQL on Render, SQLite locally
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600
+    )
 }
-
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
@@ -77,23 +70,24 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
-
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-
-# Static files (CSS, JS)
+# Static files (CSS, JS) handled by WhiteNoise
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# Media files (uploads)
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# Media files (uploads) handled by Cloudinary
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"  # Use a persistent folder in Render later
-
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
+}
 # Login
 LOGIN_URL = '/'
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
