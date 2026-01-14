@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+
+# Django
+db.sqlite3
+staticfiles/
+
+# Virtual env
+purchase_env/
+venv/
+
+# Env
+.env
